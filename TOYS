@@ -19,3 +19,26 @@ class Toy {
     }
 }
 
+public class ToyStore {
+    private List<Toy> toys;
+    private List<Toy> prizeQueue;
+
+    public ToyStore() {
+        toys = new ArrayList<>();
+        prizeQueue = new LinkedList<>();
+    }
+
+    public void addToy(int id, String name, int quantity, int weight) {
+        Toy toy = new Toy(id, name, quantity, weight);
+        toys.add(toy);
+    }
+
+    public void updateToyWeight(int toyId, int newWeight) {
+        for (Toy toy : toys) {
+            if (toy.id == toyId) {
+                toy.updateWeight(newWeight);
+                break;
+            }
+        }
+    }
+
