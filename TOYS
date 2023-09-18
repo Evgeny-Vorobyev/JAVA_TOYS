@@ -42,3 +42,58 @@ public class ToyStore {
         }
     }
 
+    public void organizeGiveaway() {
+        Random random = new Random();
+        int totalWeight = toys.stream().mapToInt(Toy::getWeight).sum();
+
+        while (!toys.isEmpty()) {
+            int rand = random.nextInt(totalWeight);
+            int cumulativeWeight = 0;
+
+            for (Toy toy : toys) {
+                cumulativeWeight += toy.getWeight();
+                if (rand < cumulativeWeight) {
+                    prizeQueue.add(toy);
+                    toy.quantity--;
+                    if (toy.quantity == 0) {
+                        toys.remove(toy);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public void getPrizeToy() {
+        if (!prizeQueue.isEmpty()) {
+            Toy prizeToy = prizeQueue.remove(0);
+            savePrizeToyToFile(prizeToy);
+            System.out.println("Congratulations! You won a " + prizeToy.name);
+        } else {
+            System.out.println("No more prize toys available.");
+        }
+    }
+
+    private void savePrizeToyToFile(Toy prizeToy) {
+        try (FileWriter writer = new FileWriter("prize_toys.txt", true)) {
+            writer.write("ID: " + prizeToy.id + " - Name: " + prizeToy.name + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        ToyStore toyStore = new ToyStore();
+
+        toyStore.addToy(1, "Doll", 10, 30);
+        toyStore.addToy(2, "Robot", 8, 20);
+        toyStore.addToy(3, "Car", 12, 50);
+
+        toyStore.organizeGiveaway();
+
+        for (int i = 0; i < 10; i++) {
+            toyStore.getPrizeToy();
+        }
+    }
+}
+
